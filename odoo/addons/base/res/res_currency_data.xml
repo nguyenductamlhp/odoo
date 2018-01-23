@@ -50,6 +50,7 @@
             <field name="symbol">$</field>
             <field name="rounding">0.01</field>
             <field name="active" eval="False"/>
+            <field name="position">before</field>
         </record>
 
         <record id="CZK" model="res.currency">
@@ -70,7 +71,7 @@
         <record id="HUF" model="res.currency">
             <field name="name">HUF</field>
             <field name="symbol">Ft</field>
-            <field name="rounding">0.01</field>
+            <field name="rounding">1.00</field>
             <field name="active" eval="False"/>
         </record>
 
@@ -78,6 +79,7 @@
             <field name="name">IDR</field>
             <field name="symbol">Rp</field>
             <field name="rounding">0.01</field>
+            <field name="position">before</field>
             <field name="active" eval="False"/>
         </record>
 
@@ -264,6 +266,7 @@
             <field name="name">ZAR</field>
             <field name="symbol">R</field>
             <field name="rounding">0.01</field>
+            <field name="position">before</field>
             <field name="active" eval="False"/>
         </record>
 
@@ -785,7 +788,7 @@
 
         <record id="DZD" model="res.currency">
             <field name="name">DZD</field>
-            <field name="symbol">DZ</field>
+            <field name="symbol">DA</field>
             <field name="rounding">0.01</field>
             <field name="active" eval="False"/>
         </record>
@@ -1135,9 +1138,10 @@
 
         <record id="PEN" model="res.currency">
             <field name="name">PEN</field>
-            <field name="symbol">S/.</field>
+            <field name="symbol">S/</field>
             <field name="rounding">0.01</field>
             <field name="active" eval="False"/>
+            <field name="position">before</field>
         </record>
 
         <record id="PYG" model="res.currency">

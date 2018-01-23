@@ -3,10 +3,20 @@
 
 from odoo import api, models, _
 from odoo.exceptions import UserError
+from odoo.tools import float_is_zero
 
 
 class AccountPartialReconcileCashBasis(models.Model):
     _inherit = 'account.partial.reconcile'
+
+    def _get_tax_cash_basis_base_account(self, line, tax):
+        ''' Get the account of lines that will contain the base amount of taxes.
+
+        :param line: An account.move.line record
+        :param tax: An account.tax record
+        :return: An account record
+        '''
+        return line.account_id
 
     def _get_tax_cash_basis_lines(self, value_before_reconciliation):
         # Search in account_move if we have any taxes account move lines
@@ -21,9 +31,10 @@ class AccountPartialReconcileCashBasis(models.Model):
                 #TOCHECK: normal and cash basis taxes shoudn't be mixed together (on the same invoice line for example) as it will
                 #create reporting issues. Not sure of the behavior to implement in that case, though.
                 # amount to write is the current cash_basis amount minus the one before the reconciliation
+                currency_id = line.currency_id or line.company_id.currency_id
                 matched_percentage = value_before_reconciliation[move.id]
-                amount = line.currency_id.round((line.credit_cash_basis - line.debit_cash_basis) - (line.credit - line.debit) * matched_percentage)
-                if not line.tax_exigible:
+                amount = currency_id.round((line.credit_cash_basis - line.debit_cash_basis) - (line.credit - line.debit) * matched_percentage)
+                if not float_is_zero(amount, precision_rounding=currency_id.rounding) and not line.tax_exigible:
                     if line.tax_line_id and line.tax_line_id.use_cash_basis:
                         # group by line account
                         acc = line.account_id.id
@@ -33,6 +44,8 @@ class AccountPartialReconcileCashBasis(models.Model):
                             tax_group[acc] = amount
                         # Group by cash basis account and tax
                         acc = line.tax_line_id.cash_basis_account.id
+                        if not acc:
+                            raise UserError(_('Please configure a Tax Received Account for tax %s') % line.tax_line_id.name)
                         key = (acc, line.tax_line_id.id)
                         if key in total_by_cash_basis_account:
                             total_by_cash_basis_account[key] += amount
@@ -40,19 +53,20 @@ class AccountPartialReconcileCashBasis(models.Model):
                             total_by_cash_basis_account[key] = amount
                     if any([tax.use_cash_basis for tax in line.tax_ids]):
                         for tax in line.tax_ids:
+                            account_id = self._get_tax_cash_basis_base_account(line, tax)
                             line_to_create.append((0, 0, {
                                 'name': '/',
-                                'debit': line.currency_id.round(line.debit_cash_basis - line.debit * matched_percentage),
-                                'credit': line.currency_id.round(line.credit_cash_basis - line.credit * matched_percentage),
-                                'account_id': line.account_id.id,
+                                'debit': currency_id.round(line.debit_cash_basis - line.debit * matched_percentage),
+                                'credit': currency_id.round(line.credit_cash_basis - line.credit * matched_percentage),
+                                'account_id': account_id.id,
                                 'tax_ids': [(6, 0, [tax.id])],
                                 'tax_exigible': True,
                             }))
                             line_to_create.append((0, 0, {
                                 'name': '/',
-                                'credit': line.currency_id.round(line.debit_cash_basis - line.debit * matched_percentage),
-                                'debit': line.currency_id.round(line.credit_cash_basis - line.credit * matched_percentage),
-                                'account_id': line.account_id.id,
+                                'credit': currency_id.round(line.debit_cash_basis - line.debit * matched_percentage),
+                                'debit': currency_id.round(line.credit_cash_basis - line.credit * matched_percentage),
+                                'account_id': account_id.id,
                                 'tax_exigible': True,
                             }))
 

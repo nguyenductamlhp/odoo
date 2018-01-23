@@ -241,7 +241,8 @@ class Project(models.Model):
         project = super(Project, self).copy(default)
         for follower in self.message_follower_ids:
             project.message_subscribe(partner_ids=follower.partner_id.ids, subtype_ids=follower.subtype_ids.ids)
-        self.map_tasks(project.id)
+        if 'tasks' not in default:
+            self.map_tasks(project.id)
         return project
 
     @api.model
@@ -264,6 +265,8 @@ class Project(models.Model):
         if 'active' in vals:
             # archiving/unarchiving a project does it on its tasks, too
             self.with_context(active_test=False).mapped('tasks').write({'active': vals['active']})
+            # archiving/unarchiving a project implies that we don't want to use the analytic account anymore
+            self.with_context(active_test=False).mapped('analytic_account_id').write({'active': vals['active']})
         return res
 
     @api.multi
@@ -394,7 +397,6 @@ class Task(models.Model):
             self.partner_id = self.project_id.partner_id
             self.stage_id = self.stage_find(self.project_id.id, [('fold', '=', False)])
         else:
-            self.partner_id = False
             self.stage_id = False
 
     @api.onchange('user_id')
@@ -415,7 +417,7 @@ class Task(models.Model):
     @api.constrains('date_start', 'date_end')
     def _check_dates(self):
         if any(self.filtered(lambda task: task.date_start and task.date_end and task.date_start > task.date_end)):
-            return ValidationError(_('Error ! Task starting date must be lower than its ending date.'))
+            raise ValidationError(_('Error ! Task starting date must be lower than its ending date.'))
 
     # Override view according to the company definition
     @api.model

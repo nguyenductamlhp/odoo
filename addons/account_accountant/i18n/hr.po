@@ -3,6 +3,7 @@
 # * account_accountant
 # 
 # Translators:
+# Tina Milas <tina@uvid.hr>, 2016
 # Bole <bole@dajmi5.com>, 2016
 msgid ""
 msgstr ""
@@ -23,7 +24,7 @@ msgstr ""
 #: code:addons/account_accountant/static/src/js/tour.js:18
 #, python-format
 msgid "Let's start with a new customer invoice."
-msgstr "Počnimo sa novim izlaznim računom."
+msgstr "Počnimo s novim izlaznim računom."
 
 #. module: account_accountant
 #. openerp-web
@@ -33,6 +34,8 @@ msgid ""
 "Ready to discover your new favorite <b>accounting app</b>? Get started by "
 "clicking here."
 msgstr ""
+"Spremni za otkrivanje Vaše nove omiljene <b>računovodstvene aplikacije</b>? "
+"Kliknite ovdje za početak."
 
 #. module: account_accountant
 #. openerp-web
@@ -42,6 +45,8 @@ msgid ""
 "Use the path to quickly click back to <b>previous screens</b>, without "
 "reloading the page."
 msgstr ""
+"Koristite stazu za brzo vraćanje nazad na <b> prethodne ekrane </b>, bez "
+"ponovnog učitavanja stranica."
 
 #. module: account_accountant
 #. openerp-web
@@ -51,3 +56,5 @@ msgid ""
 "Your reports are available in real time. <i>No need to close a fiscal year "
 "to get a Profit &amp; Loss statement or view the Balance Sheet.</i>"
 msgstr ""
+"Vaši izvještaji su dostupni u realnom vremenu. <i>Nema potrebe za "
+"zatvaranjem fiskalne godine da dobijete izvještaj RDG ili Bilancu.</i>"

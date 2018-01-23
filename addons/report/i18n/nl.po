@@ -10,10 +10,10 @@
 # Eric Geens <ericgeens@yahoo.com>, 2016
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 10.0c\n"
+"Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-07 08:57+0000\n"
-"PO-Revision-Date: 2016-09-07 08:57+0000\n"
+"POT-Creation-Date: 2017-06-23 13:27+0000\n"
+"PO-Revision-Date: 2017-06-23 13:27+0000\n"
 "Last-Translator: Eric Geens <ericgeens@yahoo.com>, 2016\n"
 "Language-Team: Dutch (https://www.transifex.com/odoo/teams/41243/nl/)\n"
 "MIME-Version: 1.0\n"
@@ -526,12 +526,30 @@ msgstr ""
 "wkhtmltopdf.org</a>"
 
 #. module: report
+#: code:addons/report/models/report.py:164
+#, python-format
+msgid "Unable to find Wkhtmltopdf on this system. The PDF can not be created."
+msgstr ""
+"Wkhtmltopdf kon niet gevonden worden op het systeem. De PDF kan niet "
+"gegenereerd worden."
+
+#. module: report
 #: model:ir.ui.view,arch_db:report.external_layout_footer
 msgid "Website:"
 msgstr "Website:"
 
 #. module: report
-#: code:addons/report/models/report.py:435
+#: code:addons/report/models/report.py:450
+#, python-format
+msgid ""
+"Wkhtmltopdf failed (error code: %s). Memory limit too low or maximum file "
+"number of subprocess reached. Message : %s"
+msgstr ""
+"Wkhtmltopdf fout (error code: %s). Te weinig geheugen or maximum aantal "
+"bestanden tegelijk bereikt. Bericht: %s"
+
+#. module: report
+#: code:addons/report/models/report.py:452
 #, python-format
 msgid "Wkhtmltopdf failed (error code: %s). Message: %s"
 msgstr "Fout in Wkhtmltopdf (fout code: %s). Bericht: %s"
@@ -560,6 +578,19 @@ msgstr ""
 "U moet uw versie van\n"
 "Wkhtmltopdf updaten naar ten minste versie 0.12.0 om een correcte weergave van koppen en voeteindes te krijgen\n"
 "en om tabel-breking tussen pagina's te ondersteunen.<br><br><a href=\"http://wkhtmltopdf.org/\"\n"
+"target=\"_blank\">wkhtmltopdf.org</a>"
+
+#. module: report
+#. openerp-web
+#: code:addons/report/static/src/js/qwebactionmanager.js:21
+#, python-format
+msgid ""
+"Your installation of Wkhtmltopdf seems to be broken. The report will be "
+"shown in html.<br><br><a href=\"http://wkhtmltopdf.org/\" "
+"target=\"_blank\">wkhtmltopdf.org</a>"
+msgstr ""
+"Uw Wkhtmltopdf installatie lijkt stuk te zijn. Het rapport wordt in HTML "
+"getoond.<br><br><a href=\"http://wkhtmltopdf.org/\" "
 "target=\"_blank\">wkhtmltopdf.org</a>"
 
 #. module: report

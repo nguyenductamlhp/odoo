@@ -176,6 +176,19 @@ Content-Type: text/html;
 --Apple-Mail=_9331E12B-8BD2-4EC7-B53E-01F3FBEC9227--
 """
 
+MAIL_SINGLE_BINARY = """X-Original-To: raoul@grosbedon.fr
+Delivered-To: raoul@grosbedon.fr
+Received: by mail1.grosbedon.com (Postfix, from userid 10002)
+    id E8166BFACA; Fri, 23 Aug 2013 13:18:01 +0200 (CEST)
+From: "Bruce Wayne" <bruce@wayneenterprises.com>
+Content-Type: application/pdf;
+Content-Disposition: filename=thetruth.pdf
+Content-Transfer-Encoding: base64
+Message-Id: <6BB1FAB2-2104-438E-9447-07AE2C8C4A92@sexample.com>
+Mime-Version: 1.0 (Mac OS X Mail 7.3 \(1878.6\))
+
+SSBhbSB0aGUgQmF0TWFuCg=="""
+
 
 MAIL_MULTIPART_IMAGE = """X-Original-To: raoul@example.com
 Delivered-To: micheline@example.com
@@ -347,6 +360,10 @@ class TestMailgateway(TestMail):
         self.assertIn('Second part',
                       res.get('body', ''),
                       'message_parse: second part of the html version should be in body after parsing multipart/mixed')
+
+        res = self.env['mail.thread'].message_parse(MAIL_SINGLE_BINARY)
+        self.assertEqual(res['body'], '')
+        self.assertEqual(res['attachments'][0][0], 'thetruth.pdf')
 
     @mute_logger('odoo.addons.mail.models.mail_thread')
     def test_message_process_cid(self):
@@ -533,6 +550,20 @@ class TestMailgateway(TestMail):
     @mute_logger('odoo.addons.mail.models.mail_thread', 'odoo.models')
     def test_message_process_references(self):
         """ Incoming email using references should go into the right destination even with a wrong destination """
+        self.format_and_process(
+            MAIL_TEMPLATE, to='erroneous@example.com',
+            extra='References: <2233@a.com>\r\n\t<3edss_dsa@b.com> %s' % self.fake_email.message_id,
+            msg_id='<1198923581.41972151344608186800.JavaMail.4@agrolait.com>')
+
+        self.assertEqual(len(self.group_public.message_ids), 2, 'message_process: group should contain one new message')
+        self.assertEqual(len(self.fake_email.child_ids), 1, 'message_process: new message should be children of the existing one')
+
+    def test_message_process_references_external(self):
+        """ Incoming email being a reply to an external email processed by odoo should update thread accordingly """
+        new_message_id = '<ThisIsTooMuchFake.MonsterEmail.789@agrolait.com>'
+        self.fake_email.write({
+            'message_id': new_message_id
+        })
         self.format_and_process(
             MAIL_TEMPLATE, to='erroneous@example.com',
             extra='References: <2233@a.com>\r\n\t<3edss_dsa@b.com> %s' % self.fake_email.message_id,
